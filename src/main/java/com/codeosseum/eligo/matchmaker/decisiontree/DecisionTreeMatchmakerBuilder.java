@@ -22,7 +22,7 @@ public class DecisionTreeMatchmakerBuilder<P, M> {
         return this;
     }
 
-    public DecisionTreeMatchmakerBuilder<P, M> matchSupplier(final MatchFunction<P, M> matchFunction) {
+    public DecisionTreeMatchmakerBuilder<P, M> matchFunction(final MatchFunction<P, M> matchFunction) {
         this.matchFunctions.add(matchFunction);
 
         return this;
