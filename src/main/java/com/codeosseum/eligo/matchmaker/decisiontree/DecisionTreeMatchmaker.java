@@ -12,6 +12,8 @@ import com.codeosseum.eligo.classifier.Classifier;
 import com.codeosseum.eligo.matchmaker.Matchmaker;
 
 class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
+    private final Object lock;
+
     private final List<Set<P>> buckets;
 
     private final List<MatchFunction<P, M>> matchFunctions;
@@ -20,23 +22,31 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
 
     @Override
     public void addPlayer(final P player) {
-        tree.addPlayer(player);
+        synchronized (lock) {
+            tree.addPlayer(player);
+        }
     }
 
     @Override
     public void removePlayer(P player) {
-        buckets.forEach(set -> set.remove(player));
+        synchronized (lock) {
+            buckets.forEach(set -> set.remove(player));
+        }
     }
 
     @Override
     public Set<M> makeMatch() {
-        return matchFunctions.stream()
-                .map(this::makeMatchUsingFunction)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+        synchronized (lock) {
+            return matchFunctions.stream()
+                    .map(this::makeMatchUsingFunction)
+                    .flatMap(Set::stream)
+                    .collect(Collectors.toSet());
+        }
     }
 
     DecisionTreeMatchmaker(final DecisionTreeMatchmakerBuilder<P, M> builder) {
+        this.lock = new Object();
+
         this.buckets = new ArrayList<>();
         this.matchFunctions = builder.getMatchFunctions();
 
