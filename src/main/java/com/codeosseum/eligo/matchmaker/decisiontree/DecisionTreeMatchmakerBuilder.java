@@ -30,4 +30,12 @@ public class DecisionTreeMatchmakerBuilder<P, M> {
     public DecisionTreeMatchmaker<P, M> build() {
         return new DecisionTreeMatchmaker<>(this);
     }
+
+    List<Classifier<P>> getClassifiers() {
+        return classifiers;
+    }
+
+    List<MatchSupplier<P, M>> getMatchSuppliers() {
+        return matchSuppliers;
+    }
 }
