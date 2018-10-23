@@ -1,6 +1,7 @@
 package com.codeosseum.eligo.matchmaker.decisiontree;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -13,7 +14,7 @@ public final class MatchFunction<P, M> {
     }
 
     private MatchFunction(final MatchFunctionBuilder<P, M> builder) {
-        this.predicate = Objects.requireNonNull(builder.predicate);
+        this.predicate = Optional.ofNullable(builder.predicate).orElse(ctx -> true);
         this.function = Objects.requireNonNull(builder.function);
     }
 
