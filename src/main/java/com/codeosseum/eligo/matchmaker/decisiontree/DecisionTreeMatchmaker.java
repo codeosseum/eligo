@@ -1,41 +1,68 @@
 package com.codeosseum.eligo.matchmaker.decisiontree;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.codeosseum.eligo.classifier.Classifier;
 import com.codeosseum.eligo.matchmaker.Matchmaker;
 
 class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
-    private final Set<BucketNode<P>> bucketNodes;
+    private final List<Set<P>> buckets;
+
+    private final List<MatchFunction<P, M>> matchFunctions;
 
     private final Node<P> tree;
 
     DecisionTreeMatchmaker(final DecisionTreeMatchmakerBuilder<P, M> builder) {
-        this.bucketNodes = new HashSet<>();
+        this.buckets = new ArrayList<>();
+        this.matchFunctions = builder.getMatchFunctions();
 
         this.tree = buildTree(builder.getClassifiers());
     }
 
     @Override
-    public void addPlayer(P player) {
+    public void addPlayer(final P player) {
         tree.addPlayer(player);
     }
 
     @Override
     public void removePlayer(P player) {
-        bucketNodes.stream()
-                .map(node -> node.players)
-                .forEach(set -> set.remove(player));
+        buckets.forEach(set -> set.remove(player));
     }
 
     @Override
     public Set<M> makeMatch() {
-        return null;
+        return matchFunctions.stream()
+                .map(this::makeMatchUsingFunction)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<M> makeMatchUsingFunction(MatchFunction<P, M> matchFunction) {
+        final Set<M> result = new HashSet<>();
+
+        for (Set<P> bucket : buckets) {
+            final BucketMatcher<P> selectionContext = new BucketMatcher<>(bucket);
+
+            final boolean canMakeMatch = matchFunction.getPredicate().test(selectionContext);
+
+            if (canMakeMatch) {
+                final PlayerPicker<P> playerPicker = new PlayerPicker<>(bucket);
+
+                final M match = matchFunction.getFunction().apply(playerPicker);
+
+                playerPicker.getSelectedPlayers().forEach(this::removePlayer);
+
+                result.add(match);
+            }
+        }
+
+        return result;
     }
 
     private Node<P> buildTree(final List<Classifier<P>> classifiers) {
@@ -46,14 +73,18 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
         if (classifierIndex == classifiers.size()) {
             final BucketNode<P> node = new BucketNode<>();
 
-            this.bucketNodes.add(node);
+            this.buckets.add(node.players);
 
             return node;
         } else {
             final Classifier<P> classifier = classifiers.get(classifierIndex);
             final ClassifierNode<P> node = new ClassifierNode<>(classifier);
 
-            node.children.addAll(Collections.nCopies(classifier.getClassCount(), makeNode(classifiers, classifierIndex + 1)));
+            final List<Node<P>> children = IntStream.range(0, classifier.getClassCount())
+                    .mapToObj(i -> makeNode(classifiers, classifierIndex + 1))
+                    .collect(Collectors.toList());
+
+            node.children.addAll(children);
 
             return node;
         }
