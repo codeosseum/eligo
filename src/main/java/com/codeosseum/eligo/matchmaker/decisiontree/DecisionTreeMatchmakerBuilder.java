@@ -9,11 +9,11 @@ import com.codeosseum.eligo.matchmaker.Matchmaker;
 public class DecisionTreeMatchmakerBuilder<P, M> {
     private final List<Classifier<P>> classifiers;
 
-    private final List<MatchSupplier<P, M>> matchSuppliers;
+    private final List<MatchFunction<P, M>> matchFunctions;
 
     public DecisionTreeMatchmakerBuilder() {
         this.classifiers = new ArrayList<>();
-        this.matchSuppliers = new ArrayList<>();
+        this.matchFunctions = new ArrayList<>();
     }
 
     public DecisionTreeMatchmakerBuilder<P, M> classifier(final Classifier<P> classifier) {
@@ -22,8 +22,8 @@ public class DecisionTreeMatchmakerBuilder<P, M> {
         return this;
     }
 
-    public DecisionTreeMatchmakerBuilder<P, M> matchSupplier(final MatchSupplier<P, M> matchSupplier) {
-        this.matchSuppliers.add(matchSupplier);
+    public DecisionTreeMatchmakerBuilder<P, M> matchSupplier(final MatchFunction<P, M> matchFunction) {
+        this.matchFunctions.add(matchFunction);
 
         return this;
     }
@@ -36,7 +36,7 @@ public class DecisionTreeMatchmakerBuilder<P, M> {
         return classifiers;
     }
 
-    List<MatchSupplier<P, M>> getMatchSuppliers() {
-        return matchSuppliers;
+    List<MatchFunction<P, M>> getMatchFunctions() {
+        return matchFunctions;
     }
 }
