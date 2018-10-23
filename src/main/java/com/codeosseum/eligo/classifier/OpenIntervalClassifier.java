@@ -17,7 +17,7 @@ import static com.codeosseum.eligo.util.ListUtils.isSorted;
  * @param <P> the player type
  * @param <V> the value type
  */
-final class OutlierIntervalClassifier<P, V extends Comparable<V>> extends AbstractClassifier<P> {
+final class OpenIntervalClassifier<P, V extends Comparable<V>> extends AbstractClassifier<P> {
     private final ValueSource<P, V> valueSource;
 
     private final List<V> boundaries;
@@ -40,7 +40,7 @@ final class OutlierIntervalClassifier<P, V extends Comparable<V>> extends Abstra
      * @throws IllegalArgumentException if the boundaries list is either unsorted or contains repeated elements
      * @throws NullPointerException if any of the arguments is {@code null}
      */
-    public static <P, V extends Comparable<V>> OutlierIntervalClassifier<P, V> fromBoundaries(final List<V> boundaries, final ValueSource<P, V> valueSource) {
+    public static <P, V extends Comparable<V>> OpenIntervalClassifier<P, V> fromBoundaries(final List<V> boundaries, final ValueSource<P, V> valueSource) {
         Objects.requireNonNull(boundaries);
         Objects.requireNonNull(valueSource);
 
@@ -52,7 +52,7 @@ final class OutlierIntervalClassifier<P, V extends Comparable<V>> extends Abstra
             throw new IllegalArgumentException("Boundaries must be sorted!");
         }
 
-        return new OutlierIntervalClassifier<>(valueSource, boundaries);
+        return new OpenIntervalClassifier<>(valueSource, boundaries);
     }
 
     @Override
@@ -73,7 +73,7 @@ final class OutlierIntervalClassifier<P, V extends Comparable<V>> extends Abstra
         return result;
     }
 
-    private OutlierIntervalClassifier(final ValueSource<P, V> valueSource, final List<V> boundaries) {
+    private OpenIntervalClassifier(final ValueSource<P, V> valueSource, final List<V> boundaries) {
         this.valueSource = valueSource;
         this.boundaries = boundaries;
     }

@@ -15,7 +15,7 @@ public final class Classifiers {
         Objects.requireNonNull(boundaries);
         Objects.requireNonNull(valueSource);
 
-        return OutlierIntervalClassifier.fromBoundaries(boundaries, valueSource);
+        return OpenIntervalClassifier.fromBoundaries(boundaries, valueSource);
     }
 
     private Classifiers() {

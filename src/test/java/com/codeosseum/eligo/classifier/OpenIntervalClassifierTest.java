@@ -18,9 +18,9 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static com.codeosseum.eligo.classifier.OutlierIntervalClassifier.fromBoundaries;
+import static com.codeosseum.eligo.classifier.OpenIntervalClassifier.fromBoundaries;
 
-class OutlierIntervalClassifierTest {
+class OpenIntervalClassifierTest {
     @Test
     @DisplayName("fromBoundaries should throw NullPointerException if boundaries is null.")
     void fromValuesShouldThrowNullPointerExceptionIfValuesIsNull() {
@@ -70,7 +70,7 @@ class OutlierIntervalClassifierTest {
     @DisplayName("classify should work correctly.")
     void classifyShouldWorkCorrectly(final List<String> boundaries, final DummyPlayer player, final List<Optional<DummyPlayer>> expectedClassification) {
         // Given
-        final OutlierIntervalClassifier<DummyPlayer, String> classifier = fromBoundaries(boundaries, DummyPlayer::getName);
+        final OpenIntervalClassifier<DummyPlayer, String> classifier = fromBoundaries(boundaries, DummyPlayer::getName);
 
         // When
         final List<Optional<DummyPlayer>> actualClassification = classifier.classify(player);
