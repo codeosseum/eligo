@@ -18,13 +18,6 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
 
     private final Node<P> tree;
 
-    DecisionTreeMatchmaker(final DecisionTreeMatchmakerBuilder<P, M> builder) {
-        this.buckets = new ArrayList<>();
-        this.matchFunctions = builder.getMatchFunctions();
-
-        this.tree = buildTree(builder.getClassifiers());
-    }
-
     @Override
     public void addPlayer(final P player) {
         tree.addPlayer(player);
@@ -41,6 +34,13 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
                 .map(this::makeMatchUsingFunction)
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet());
+    }
+
+    DecisionTreeMatchmaker(final DecisionTreeMatchmakerBuilder<P, M> builder) {
+        this.buckets = new ArrayList<>();
+        this.matchFunctions = builder.getMatchFunctions();
+
+        this.tree = buildTree(builder.getClassifiers());
     }
 
     private Set<M> makeMatchUsingFunction(MatchFunction<P, M> matchFunction) {
@@ -91,7 +91,7 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
     }
 
     private static abstract class Node<P> {
-        protected List<Node<P>> children;
+        List<Node<P>> children;
 
         abstract void addPlayer(P player);
     }

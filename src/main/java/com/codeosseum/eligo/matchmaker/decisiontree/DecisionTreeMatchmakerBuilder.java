@@ -6,7 +6,7 @@ import java.util.List;
 import com.codeosseum.eligo.classifier.Classifier;
 import com.codeosseum.eligo.matchmaker.Matchmaker;
 
-public class DecisionTreeMatchmakerBuilder<P, M> {
+public final class DecisionTreeMatchmakerBuilder<P, M> {
     private final List<Classifier<P>> classifiers;
 
     private final List<MatchFunction<P, M>> matchFunctions;
