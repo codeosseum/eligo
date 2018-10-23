@@ -17,7 +17,7 @@ import static com.codeosseum.eligo.util.ListUtils.isSorted;
  * @param <P> the player type
  * @param <V> the value type
  */
-public class OutlierIntervalClassifier<P, V extends Comparable<V>> extends AbstractClassifier<P> {
+final class OutlierIntervalClassifier<P, V extends Comparable<V>> extends AbstractClassifier<P> {
     private final ValueSource<P, V> valueSource;
 
     private final List<V> boundaries;

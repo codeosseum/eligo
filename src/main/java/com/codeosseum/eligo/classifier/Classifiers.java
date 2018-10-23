@@ -11,6 +11,13 @@ public final class Classifiers {
         return ExactMatchingClassifier.fromValues(values, valueSource);
     }
 
+    public static <P, V extends Comparable<V>> Classifier<P> openInterval(final List<V> boundaries, final ValueSource<P, V> valueSource) {
+        Objects.requireNonNull(boundaries);
+        Objects.requireNonNull(valueSource);
+
+        return OutlierIntervalClassifier.fromBoundaries(boundaries, valueSource);
+    }
+
     private Classifiers() {
         // Cannot be constructed.
     }
