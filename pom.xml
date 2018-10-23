@@ -7,6 +7,11 @@
     <groupId>com.codeosseum</groupId>
     <artifactId>eligo</artifactId>
     <version>0.1.0</version>
+    <name>Eligo</name>
+    <description>Customizable matchmaking library.</description>
 
-
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
+    </properties>
 </project>
