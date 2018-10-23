@@ -1,5 +1,6 @@
 package com.codeosseum.eligo.classifier;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -83,17 +84,24 @@ final class OpenIntervalClassifier<P, V extends Comparable<V>> extends AbstractC
     }
 
     private List<Optional<P>> mapOverIntervals(P player) {
-        final List<Optional<P>> result = boundaries.stream()
-                .map(boundary -> classifyInterval(boundary, player))
-                .collect(Collectors.toList());
+        final List<Optional<P>> classifications = new ArrayList<>();
 
-        if (hasNonEmptyClass(result)) {
-            fillWithEmptyClasses(result);
-        } else {
-            addLastClassAsMatch(result, player);
+        for (V boundary : boundaries) {
+            final Optional<P> classification = classifyInterval(boundary, player);
+            classifications.add(classification);
+
+            if (classification.isPresent()) {
+                break;
+            }
         }
 
-        return result;
+        if (hasNonEmptyClass(classifications)) {
+            fillWithEmptyClasses(classifications);
+        } else {
+            addLastClassAsMatch(classifications, player);
+        }
+
+        return classifications;
     }
 
     private Optional<P> classifyInterval(V boundary, P player) {
