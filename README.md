@@ -1,1 +1,3 @@
-# eligo
+# Eligo
+
+> Simple matchmaking in Java.
