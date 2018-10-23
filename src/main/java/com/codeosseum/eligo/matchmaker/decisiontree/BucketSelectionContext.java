@@ -13,6 +13,10 @@ public final class BucketSelectionContext<P> {
         return ctx -> ctx.players.stream().allMatch(playerPredicate);
     }
 
+    public static <P> Predicate<BucketSelectionContext<P>> hasAtLeast(final int count) {
+        return hasAtLeast(count, p -> true);
+    }
+
     public static <P> Predicate<BucketSelectionContext<P>> hasAtLeast(final int count, final Predicate<P> playerPredicate) {
         Objects.requireNonNull(playerPredicate);
 
