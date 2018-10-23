@@ -1,19 +1,21 @@
 package com.codeosseum.eligo.classifier;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+
+import static com.codeosseum.eligo.util.ListUtils.hasRepeatedElements;
 
 /**
  * Classifier that uses exact matching (based on {@code equals}) to perform classification.
  * @param <P> the player type
  * @param <V> the value type
  */
-public class ExactMatchingClassifier<P, V> extends ValueSourceBasedClassifier<P, V> {
+public class ExactMatchingClassifier<P, V> extends AbstractClassifier<P> {
+    private final ValueSource<P, V> valueSource;
+
     private final List<V> values;
 
     /**
@@ -48,33 +50,7 @@ public class ExactMatchingClassifier<P, V> extends ValueSourceBasedClassifier<P,
     }
 
     @Override
-    public List<Optional<P>> classify(final P player) {
-        final List<Optional<P>> optionals = mapToOptionals(Objects.requireNonNull(player));
-
-        if (playerIsNotClassified(optionals)) {
-            throw new ClassificationException("The specified player does not belong to any of the classes.");
-        }
-
-        if (playerIsInMultipleClasses(optionals)) {
-            throw new ClassificationException("The specified player belongs to multiple classes.");
-        }
-
-        return optionals;
-    }
-
-    private static <T> boolean hasRepeatedElements(final List<T> list) {
-        final Set<T> set = new HashSet<>(list);
-
-        return set.size() != list.size();
-    }
-
-    private ExactMatchingClassifier(final ValueSource<P, V> valueSource, final List<V> values) {
-        super(valueSource);
-
-        this.values = values;
-    }
-
-    private List<Optional<P>> mapToOptionals(final P player) {
+    protected List<Optional<P>> mapToOptionals(final P player) {
         final V actual = valueSource.get(player);
 
         return values.stream()
@@ -84,14 +60,8 @@ public class ExactMatchingClassifier<P, V> extends ValueSourceBasedClassifier<P,
                 .collect(toList());
     }
 
-    private boolean playerIsNotClassified(final List<Optional<P>> optionals) {
-        return optionals.stream()
-                .noneMatch(Optional::isPresent);
-    }
-
-    private boolean playerIsInMultipleClasses(final List<Optional<P>> optionals) {
-        return optionals.stream()
-                .filter(Optional::isPresent)
-                .count() > 1;
+    private ExactMatchingClassifier(final ValueSource<P, V> valueSource, final List<V> values) {
+        this.valueSource = valueSource;
+        this.values = values;
     }
 }
