@@ -1,10 +1,13 @@
 package com.codeosseum.eligo.matchmaker.decisiontree;
 
-import com.codeosseum.eligo.matchmaker.Matchmaker;
-
 import java.util.Set;
 
+import com.codeosseum.eligo.matchmaker.Matchmaker;
+
 class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
+    DecisionTreeMatchmaker(final DecisionTreeMatchmakerBuilder<P, M> builder) {
+    }
+
     @Override
     public void addPlayer(P player) {
 
