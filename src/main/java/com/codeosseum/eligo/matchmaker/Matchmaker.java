@@ -1,4 +1,4 @@
-package com.codeosseum.eligo;
+package com.codeosseum.eligo.matchmaker;
 
 import java.util.Set;
 
