@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class MatchFunction<P, M> {
-    private final Predicate<BucketSelectionContext<P>> predicate;
+    private final Predicate<BucketMatcher<P>> predicate;
     private final Function<PlayerPicker<P>, M> function;
 
     public static <P, M> MatchFunctionBuilder<P, M> builder() {
@@ -18,7 +18,7 @@ public final class MatchFunction<P, M> {
         this.function = Objects.requireNonNull(builder.function);
     }
 
-    Predicate<BucketSelectionContext<P>> getPredicate() {
+    Predicate<BucketMatcher<P>> getPredicate() {
         return predicate;
     }
 
@@ -27,10 +27,10 @@ public final class MatchFunction<P, M> {
     }
 
     public static final class MatchFunctionBuilder<P, M> {
-        private Predicate<BucketSelectionContext<P>> predicate;
+        private Predicate<BucketMatcher<P>> predicate;
         private Function<PlayerPicker<P>, M> function;
 
-        public MatchFunctionBuilder<P, M> predicate(final Predicate<BucketSelectionContext<P>> predicate) {
+        public MatchFunctionBuilder<P, M> predicate(final Predicate<BucketMatcher<P>> predicate) {
             this.predicate = Objects.requireNonNull(predicate);
 
             return this;
