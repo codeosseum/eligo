@@ -13,7 +13,7 @@ import static com.codeosseum.eligo.util.ListUtils.hasRepeatedElements;
  * @param <P> the player type
  * @param <V> the value type
  */
-public class ExactMatchingClassifier<P, V> extends AbstractClassifier<P> {
+final class ExactMatchingClassifier<P, V> extends AbstractClassifier<P> {
     private final ValueSource<P, V> valueSource;
 
     private final List<V> values;
