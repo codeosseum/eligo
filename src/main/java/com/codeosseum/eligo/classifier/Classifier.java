@@ -21,6 +21,7 @@ public interface Classifier<P> {
      * appropriate index. As a consequence, there is only a single non-empty optional in the returned list.
      * @param player the player to be classified
      * @return the result of the classification
+     * @throws ClassificationException if the player cannot be classified
      * @throws NullPointerException if the player is {@code null}
      */
     List<Optional<P>> classify(P player);
