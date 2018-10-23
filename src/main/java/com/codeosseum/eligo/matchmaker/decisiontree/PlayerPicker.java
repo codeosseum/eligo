@@ -86,6 +86,18 @@ public final class PlayerPicker<P> {
         return availablePlayers.size();
     }
 
+    public int getSelectedPlayerCount() {
+        return selectedPlayers.size();
+    }
+
+    public void reset() {
+        availablePlayers.addAll(selectedPlayers);
+
+        selectedPlayers.clear();
+
+        Collections.shuffle(availablePlayers);
+    }
+
     PlayerPicker(final Set<P> players) {
         this.selectedPlayers = new HashSet<>();
         this.availablePlayers = new ArrayList<>(players);
