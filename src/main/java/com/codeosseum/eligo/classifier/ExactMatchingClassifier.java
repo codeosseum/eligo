@@ -1,7 +1,18 @@
 package com.codeosseum.eligo.classifier;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
+
+/**
+ * Classifier that uses exact matching (based on {@code equals}) to perform classification.
+ * @param <P> the player type
+ * @param <V> the value type
+ */
 public class ExactMatchingClassifier<P, V> extends ValueSourceBasedClassifier<P, V> {
     private final List<V> values;
 
@@ -31,24 +42,56 @@ public class ExactMatchingClassifier<P, V> extends ValueSourceBasedClassifier<P,
         return new ExactMatchingClassifier<>(valueSource, values);
     }
 
+    @Override
+    public int getClassCount() {
+        return values.size();
+    }
+
+    @Override
+    public List<Optional<P>> classify(final P player) {
+        final List<Optional<P>> optionals = mapToOptionals(Objects.requireNonNull(player));
+
+        if (playerIsNotClassified(optionals)) {
+            throw new ClassificationException("The specified player does not belong to any of the classes.");
+        }
+
+        if (playerIsInMultipleClasses(optionals)) {
+            throw new ClassificationException("The specified player belongs to multiple classes.");
+        }
+
+        return optionals;
+    }
+
     private static <T> boolean hasRepeatedElements(final List<T> list) {
         final Set<T> set = new HashSet<>(list);
 
         return set.size() != list.size();
     }
 
-    protected ExactMatchingClassifier(final ValueSource<P, V> valueSource, final List<V> values) {
+    private ExactMatchingClassifier(final ValueSource<P, V> valueSource, final List<V> values) {
         super(valueSource);
+
         this.values = values;
     }
 
-    @Override
-    public int getClassCount() {
-        return 0;
+    private List<Optional<P>> mapToOptionals(final P player) {
+        final V actual = valueSource.get(player);
+
+        return values.stream()
+                .map(expected -> expected.equals(actual))
+                .map(match -> match ? player : null)
+                .map(Optional::ofNullable)
+                .collect(toList());
     }
 
-    @Override
-    public List<Optional<P>> classify(P player) {
-        return null;
+    private boolean playerIsNotClassified(final List<Optional<P>> optionals) {
+        return optionals.stream()
+                .noneMatch(Optional::isPresent);
+    }
+
+    private boolean playerIsInMultipleClasses(final List<Optional<P>> optionals) {
+        return optionals.stream()
+                .filter(Optional::isPresent)
+                .count() > 1;
     }
 }
