@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.codeosseum.eligo.classifier.Classifier;
+import com.codeosseum.eligo.matchmaker.Matchmaker;
 
 public class DecisionTreeMatchmakerBuilder<P, M> {
     private final List<Classifier<P>> classifiers;
@@ -27,7 +28,7 @@ public class DecisionTreeMatchmakerBuilder<P, M> {
         return this;
     }
 
-    public DecisionTreeMatchmaker<P, M> build() {
+    public Matchmaker<P, M> build() {
         return new DecisionTreeMatchmaker<>(this);
     }
 
