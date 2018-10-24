@@ -19,8 +19,8 @@ import static com.codeosseum.eligo.matchmaker.decisiontree.BucketMatcher.hasAtLe
 public class DevQaExample {
     public static void main(String[] args) {
         // Setup Matchmaker
-        final Predicate<Player> isDev = player -> player.role.equals(Role.DEV);
-        final Predicate<Player> isQA = player -> player.role.equals(Role.QA);
+        final Predicate<Player> isDev = player -> Role.DEV.equals(player.role);
+        final Predicate<Player> isQA = player -> Role.QA.equals(player.role);
 
         final MatchFunction<Player, Match> devQaMatch = MatchFunction.<Player, Match>builder()
                 .predicate(hasAtLeast(Match.TEAMS, isDev).and(hasAtLeast(Match.TEAMS, isQA)))
