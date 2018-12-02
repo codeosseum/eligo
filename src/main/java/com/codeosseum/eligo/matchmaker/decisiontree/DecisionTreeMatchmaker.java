@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.codeosseum.eligo.classifier.Classifier;
 import com.codeosseum.eligo.matchmaker.Matchmaker;
@@ -38,7 +39,17 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
     public Set<M> makeMatch() {
         synchronized (lock) {
             return matchFunctions.stream()
-                    .map(this::makeMatchUsingFunction)
+                    .map(this::makeMatchUsingFunctionRemovingPlayers)
+                    .flatMap(Set::stream)
+                    .collect(Collectors.toSet());
+        }
+    }
+
+    @Override
+    public Set<M> makeMatchAndKeepPlayers() {
+        synchronized (lock) {
+            return matchFunctions.stream()
+                    .map(this::makeMatchUsingFunctionKeepingPlayers)
                     .flatMap(Set::stream)
                     .collect(Collectors.toSet());
         }
@@ -53,26 +64,50 @@ class DecisionTreeMatchmaker<P, M> implements Matchmaker<P, M> {
         this.tree = buildTree(builder.getClassifiers());
     }
 
-    private Set<M> makeMatchUsingFunction(MatchFunction<P, M> matchFunction) {
-        final Set<M> result = new HashSet<>();
+    private Set<M> makeMatchUsingFunctionRemovingPlayers(final MatchFunction<P, M> matchFunction) {
+        return buckets.stream()
+                .map(bucket -> makeMatchFromBucketRemovingPlayers(matchFunction, bucket))
+                .flatMap(optional -> optional.map(Stream::of).orElseGet(Stream::empty))
+                .collect(Collectors.toSet());
+    }
 
-        for (Set<P> bucket : buckets) {
-            final BucketMatcher<P> selectionContext = new BucketMatcher<>(bucket);
+    private Set<M> makeMatchUsingFunctionKeepingPlayers(final MatchFunction<P, M> matchFunction) {
+        return buckets.stream()
+                .map(bucket -> makeMatchFromBucketKeepingPlayers(matchFunction, bucket))
+                .flatMap(optional -> optional.map(Stream::of).orElseGet(Stream::empty))
+                .collect(Collectors.toSet());
+    }
 
-            final boolean canMakeMatch = matchFunction.getPredicate().test(selectionContext);
+    private Optional<M> makeMatchFromBucketRemovingPlayers(final MatchFunction<P, M> function, final Set<P> bucket) {
+        final BucketMatcher<P> selectionContext = new BucketMatcher<>(bucket);
 
-            if (canMakeMatch) {
-                final PlayerPicker<P> playerPicker = new PlayerPicker<>(bucket);
+        final boolean canMakeMatch = function.getPredicate().test(selectionContext);
 
-                final M match = matchFunction.getFunction().apply(playerPicker);
+        if (canMakeMatch) {
+            final PlayerPicker<P> playerPicker = new PlayerPicker<>(bucket);
 
-                playerPicker.getSelectedPlayers().forEach(this::removePlayer);
+            final M match = function.getFunction().apply(playerPicker);
 
-                result.add(match);
-            }
+            playerPicker.getSelectedPlayers().forEach(this::removePlayer);
+
+            return Optional.of(match);
         }
 
-        return result;
+        return Optional.empty();
+    }
+
+    private Optional<M> makeMatchFromBucketKeepingPlayers(final MatchFunction<P, M> function, final Set<P> bucket) {
+        final BucketMatcher<P> selectionContext = new BucketMatcher<>(bucket);
+
+        final boolean canMakeMatch = function.getPredicate().test(selectionContext);
+
+        if (canMakeMatch) {
+            final PlayerPicker<P> playerPicker = new PlayerPicker<>(bucket);
+
+            return Optional.of(function.getFunction().apply(playerPicker));
+        }
+
+        return Optional.empty();
     }
 
     private Node<P> buildTree(final List<Classifier<P>> classifiers) {

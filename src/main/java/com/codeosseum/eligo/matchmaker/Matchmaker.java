@@ -28,4 +28,11 @@ public interface Matchmaker<P, M> {
      * @return a set of matches
      */
     Set<M> makeMatch();
+
+    /**
+     * Creates new matches from the previously added players. If no matches can be made, then an empty set is returned.
+     * Players contained within the returned matches are kept in the lobby. Their removal must be handled by the caller.
+     * @return a set of matches
+     */
+    Set<M> makeMatchAndKeepPlayers();
 }
