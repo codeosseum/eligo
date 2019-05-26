@@ -6,6 +6,7 @@
 
 <div align="center">
 
+[ ![Bintray](https://api.bintray.com/packages/codeosseum/repo/eligo/images/download.svg) ](https://bintray.com/codeosseum/repo/eligo/_latestVersion)
 [![Build Status](https://dev.azure.com/codeosseum/Eligo/_apis/build/status/codeosseum.eligo?branchName=master)](https://dev.azure.com/codeosseum/Eligo/_build/latest?definitionId=3&branchName=master)
 [![License](https://img.shields.io/github/license/codeosseum/eligo.svg?label=license)](LICENSE)
 
