@@ -6,6 +6,7 @@
 
 <div align="center">
 
+[![Build Status](https://dev.azure.com/codeosseum/Eligo/_apis/build/status/codeosseum.eligo?branchName=master)](https://dev.azure.com/codeosseum/Eligo/_build/latest?definitionId=3&branchName=master)
 [![License](https://img.shields.io/github/license/codeosseum/eligo.svg?label=license)](LICENSE)
 
 </div>
